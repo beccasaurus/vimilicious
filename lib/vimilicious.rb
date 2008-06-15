@@ -101,13 +101,30 @@ def clear!
   cmd 'bd!'
 end
 
+# append text to the end of the current_buffer
+#
+#   :ruby append 'hello there'
+def append text
+  current_buffer.append current_buffer.length, text
+end
+
+# prompts user for input
+#
+#   :ruby prompt('username')
+def prompt name = 'input', format = lambda { |name| "#{name}: " }
+  input = vim_eval("inputdialog('#{ format.call(name) }')")
+  puts '' # clear statusline thinger
+  input
+end
+
 # create a vim user command that calls a ruby method or block
 #
 #   :ruby create_command :test                # creates a :Test command that calls a 'test' method
 #   :ruby create_command 'test', :hi          # creates a :Test command that calls a 'hi' method
 #   :ruby create_command(:test){ puts 'hi' }  # creates a :Test command that calls the block passed in
 #
-# BLOCKS NOT YET SUPPORTED
+# WARNING ... as of now, the args passed to these commands get turned into one big string which 
+# is passed along to the function and method.  i haven't figured out howto fix this yet  :(
 def create_command name, method = nil, &block
   command_name  = name.to_s.capitalize
   method_name   = (method.nil?) ? name.to_s : method.to_s
@@ -123,7 +140,8 @@ def create_command name, method = nil, &block
   end
 
   # create a vim command that calls the vim function
-  cmd %{command! -nargs=* #{ command_name } call #{ function_name }(<f-args>)}
+  # cmd %{command! -nargs=* #{ command_name } call #{ function_name }(<f-args>)}
+  cmd %{command! -nargs=* #{ command_name } call #{ function_name }(<q-args>)} # passes all args as 1 string
 end
 
 # get the word under the cursor
@@ -140,3 +158,5 @@ def current_word filter=/[,'`\.:\(\)\[\]\}\{]/, replace_with=''
 end
 
 ### COMMANDS ###
+
+create_command('InspectArgs'){ |*args| puts "passed: #{args.inspect}" }
