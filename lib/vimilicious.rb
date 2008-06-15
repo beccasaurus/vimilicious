@@ -140,8 +140,7 @@ def create_command name, method = nil, &block
   end
 
   # create a vim command that calls the vim function
-  # cmd %{command! -nargs=* #{ command_name } call #{ function_name }(<f-args>)}
-  cmd %{command! -nargs=+ #{ command_name } call #{ function_name }(<args>)} # passes all args as 1 string
+  cmd %{command! -nargs=* #{ command_name } call #{ function_name }(<args>)}
 end
 
 # get the word under the cursor
