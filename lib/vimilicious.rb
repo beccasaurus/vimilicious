@@ -79,9 +79,12 @@ end
 
 # set the text of the currently selected line
 #
-#   :ruby current_line = 'hi there'
-def current_line= text
-  current_buffer[ current_buffer.line_number ] = text
+# we're not using the more conventional current_line= because
+# that simply creates a local variable named current_line
+#
+#   :ruby set_current_line 'hi there'
+def set_current_line text
+  current_buffer[ current_buffer.line_number ] = text.to_s
 end
 
 # deletes the current buffer (closes the file)
