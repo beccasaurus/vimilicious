@@ -77,10 +77,24 @@ def current_line
   current_buffer.line
 end
 
+# set the text of the currently selected line
+#
+#   :ruby current_line = 'hi there'
+def current_line= text
+  current_buffer[ current_buffer.line_number ] = text
+end
+
 # deletes the current buffer (closes the file)
 #
 #   :ruby clear
 def clear
+  cmd 'bd'
+end
+
+# forcefully deletes the current buffer (closes the file) (unsaved changes will be lost!)
+#
+#   :ruby clear!
+def clear!
   cmd 'bd!'
 end
 
