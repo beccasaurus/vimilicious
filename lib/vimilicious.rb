@@ -87,14 +87,14 @@ def set_current_line text
   current_buffer[ current_buffer.line_number ] = text.to_s
 end
 
-# deletes the current buffer (closes the file)
+# deletes the current buffer (closes the file) but keeps the current layout
 #
 #   :ruby clear
 def clear
-  cmd 'bd'
+  cmd 'let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn'
 end
 
-# forcefully deletes the current buffer (closes the file) (unsaved changes will be lost!)
+# forcefully deletes the current buffer and clears the wholelayout
 #
 #   :ruby clear!
 def clear!
