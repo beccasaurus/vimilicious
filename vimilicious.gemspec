@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "vimilicious"
-  s.version = "0.1.3"
+  s.version = "0.1.4"
   s.date = "2008-06-15"
   s.summary = "vim-ruby library for making vim easy"
   s.email = "remi@remitaylor.com"
