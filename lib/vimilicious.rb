@@ -92,6 +92,7 @@ end
 #   :ruby clear
 def clear
   cmd 'let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn'
+  clear_buffer
 end
 
 # forcefully deletes the current buffer and clears the wholelayout
@@ -99,6 +100,13 @@ end
 #   :ruby clear!
 def clear!
   cmd 'bd!'
+  clear_buffer
+end
+
+# deletes all lines in the current_buffer
+def clear_buffer
+  exec 'gg'
+  current_buffer.length.times { current_buffer.delete(1) }
 end
 
 # append text to the end of the current_buffer
