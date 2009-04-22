@@ -1,4 +1,4 @@
-= vimilicious
+= Vimilicious
 
 vimilicious is a gem/library that you can use on top of vim-ruby 
 for easier vim scripting, vim 'app' creation, or whatever you want
@@ -11,9 +11,16 @@ as much as i love and adore rails.vim ... have you ever looked at the source?  h
 
 using ruby for some of your vim scripting or application creation can make your life much easier.
 only those with vim compiled with ruby support will be able to take advantage of vimilicious or 
-vimilicious-based scripts/applications, but that's okay in my book.  
+Vimilicious based scripts/applications, but that's okay in my book.  
 we don't code in C just because not everyone has ruby installed, do we?
 
 == Install
 
   $ sudo gem install remi-vimilicious -s http://gems.github.com
+
+== Usage
+
+see Vimilicious RDoc or examples
+
+documentation:: http://code.remi.org/vimilicious
+example:: http://github.com/remi/vimilicious/tree/master/examples
