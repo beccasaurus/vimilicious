@@ -126,14 +126,112 @@ module Vimilicious
     input
   end
 
+  # ruby method for mapping keyboard shortcuts to something
+  #
+  # this is a ruby wrapper around vim's map functions
+  #
+  # ==== VIM Modes
+  #
+  # map::  Normal, Visual, Operator-pending 
+  # map!:: Insert, Command-line 
+  # nmap:: Normal 
+  # vmap:: Visual 
+  # omap:: Operator-pending 
+  # cmap:: Command-line 
+  # imap:: Insert 
+  # lmap:: Insert, Command-line, Lang-Arg 
+  #
+  # references:
+  # - http://www.vim.org/htmldoc/map.html
+  # - http://howto.wikia.com/wiki/Howto_map_keys_in_vim
+  #
+  # === Usage
+  #
+  #   map :normal, '<C-v>', do
+  #     # some code that will run whenever
+  #     # Control-V is pressed in Normal mode
+  #   end
+  #
+  # ==== Parameters
+  # modes::
+  #   either a single mode, eg. :normal or an Array of 
+  #   multiple modes, eg. %w( visual command ).
+  #
+  #   valid mode names: normal, visual, insert, command, operator, lang
+  #
+  # shortcut::
+  #   a shortcut just like VIM normally understands, eg. <C-v>
+  #
+  # vim_command::
+  #   optional.  this is a string command that we'll map 
+  #   this shortcut to.  if this is passed, the &block 
+  #   parameter is ignored and vim_command is run instead!
+  #   you can still run ruby with this parameter by 
+  #   passing something like '<Esc>:ruby puts 'hi'<Enter>' 
+  #
+  # &block::
+  #   a block of code to run whenever the code is pressed
+  #
+  # TODO allow #map('<C-r>'){ ... } and use default mode
+  #
+  def map mode, shortcut, vim_command = nil, &block
+  end
+
+  # returns the map command(s) you should use if you want 
+  # to map with the mode(s) given
+  #
+  # see spec/mapping_spec.rb
+  #
+  #   >> map_commands_for(:normal)
+  #   => :nmap
+  #
+  def map_commands_for *modes
+    @mapmodes ||= {
+      :map  => [ :normal, :visual, :operator ],
+      :map! => [ :insert, :command ],
+      :nmap => [ :normal ],
+      :vmap => [ :visual ], 
+      :omap => [ :operator ], 
+      :cmap => [ :command ], 
+      :imap => [ :insert ], 
+      :lmap => [ :insert, :command, :lang ]
+    }
+    
+    # first, see if there's a mode that has the modes we want and nothing more
+    mode_that_has_everything_we_want_and_nothing_else = @mapmodes.find do |mode_command, available_modes|
+      match = true
+      match = false unless available_modes.length == modes.length
+      modes.each {|mode| match = false unless available_modes.include?(mode) }
+      match
+    end
+
+    return [ mode_that_has_everything_we_want_and_nothing_else[0] ] if mode_that_has_everything_we_want_and_nothing_else
+
+    modes_that_have_everything_we_want_and_some_more = @mapmodes.select do |mode_command, available_modes|
+      match = true
+      modes.each {|mode| match = false unless available_modes.include?(mode) }
+      match
+    end
+
+    return [ modes_that_have_everything_we_want_and_some_more[0][0] ] if modes_that_have_everything_we_want_and_some_more.length == 1
+
+  end
+
   # create a vim user command that calls a ruby method or block
   #
   #   :ruby create_command :test                # creates a :Test command that calls a 'test' method
   #   :ruby create_command 'test', :hi          # creates a :Test command that calls a 'hi' method
   #   :ruby create_command(:test){ puts 'hi' }  # creates a :Test command that calls the block passed in
   #
-  # WARNING ... as of now, the args passed to these commands get turned into one big string which 
-  # is passed along to the function and method.  i haven't figured out howto fix this yet  :(
+  #   :ruby create_command(:foo){|*args| puts "called foo with args: #{ args.inspect }" }
+  #
+  #   :Foo 'hello', 'there', 1, 2, 3
+  #   called foo with args: ["hi", "there", 1, 2, 3]
+  #
+  # ==== Notes
+  #
+  # the name of the command will be capitalized, so :test is callable as :Test
+  #
   def create_command name, method = nil, &block
     command_name  = name.to_s.capitalize
     method_name   = (method.nil?) ? name.to_s : method.to_s
@@ -165,10 +263,10 @@ module Vimilicious
     word
   end
 
-  ### COMMANDS ###
-
-  create_command('InspectArgs'){ |*args| puts "passed: #{args.inspect}" }
-
 end
 
 include Vimilicious
+
+### COMMANDS ###
+
+create_command('InspectArgs'){ |*args| puts "passed: #{args.inspect}" }
