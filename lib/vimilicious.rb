@@ -207,13 +207,31 @@ module Vimilicious
 
     return [ mode_that_has_everything_we_want_and_nothing_else[0] ] if mode_that_has_everything_we_want_and_nothing_else
 
+    # see if the modes we're looking for have a 1 <=> 1 mapping with available modes
+    one_to_one_mapping_modes = modes.map do |mode|
+      @mapmodes.find do |mode_command, available_modes|
+        available_modes == [mode]
+      end
+    end
+
+    return one_to_one_mapping_modes.map {|mode_command, available_modes| 
+      mode_command
+    } unless one_to_one_mapping_modes.include? nil
+
+    # hmm, regardless of whether it'll have more than we want, see if we can find a mode 
+    # that has all of the modes we're looking for
     modes_that_have_everything_we_want_and_some_more = @mapmodes.select do |mode_command, available_modes|
       match = true
       modes.each {|mode| match = false unless available_modes.include?(mode) }
       match
     end
 
-    return [ modes_that_have_everything_we_want_and_some_more[0][0] ] if modes_that_have_everything_we_want_and_some_more.length == 1
+    if modes_that_have_everything_we_want_and_some_more.length == 1
+      return [ modes_that_have_everything_we_want_and_some_more[0][0] ]
+    else
+      puts "modes: #{ modes.inspect } ... we found: #{ modes_that_have_everything_we_want_and_some_more.inspect }"
+      []
+    end
 
   end
 

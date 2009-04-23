@@ -31,18 +31,17 @@ describe Vimilicious, '#map' do
     map_commands_for(:normal).should   == [:nmap]
     
     # ok, now multiple ...
-=begin
+    map_commands_for(:normal, :visual, :operator).should == [:map]
     map_commands_for(:insert, :command).should  == [:map!]
-    map_commands_for(:normal, :visual).should   == [:map]
+    map_commands_for(:normal, :visual).should   == [:nmap, :vmap]
 
     map_commands_for(:normal, :command).length.should == 2
     map_commands_for(:normal, :command).should  include(:nmap)
     map_commands_for(:normal, :command).should  include(:cmap)
 
-    map_commands_for(:normal, :operator).lenght.should == 2
+    map_commands_for(:normal, :operator).length.should == 2
     map_commands_for(:normal, :operator).should include(:nmap)
     map_commands_for(:normal, :operator).should include(:omap)
-=end
   end
 
 end
