@@ -22,8 +22,12 @@ describe Vimilicious, '#map' do
   # cmap:: Command-line 
   # imap:: Insert 
   # lmap:: Insert, Command-line, Lang-Arg 
+  #
   it 'should be able to figure out which vim mapping command to use' do
+    map_commands_for('visual').should   == [:vmap]
+    map_commands_for('ViSuaL').should   == [:vmap]
     map_commands_for(:visual).should   == [:vmap]
+
     map_commands_for(:command).should  == [:cmap]
     map_commands_for(:lang).should     == [:lmap] # it has to, because it's the only option with lmap
     map_commands_for(:insert).should   == [:imap]

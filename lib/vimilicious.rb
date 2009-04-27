@@ -152,10 +152,12 @@ module Vimilicious
   #     # Control-V is pressed in Normal mode
   #   end
   #
+  #   map '<F5>', ":echo 'hello from F5'<Enter>"
+  #
   # ==== Parameters
   # modes::
-  #   either a single mode, eg. :normal or an Array of 
-  #   multiple modes, eg. %w( visual command ).
+  #   optional. either a single mode, eg. :normal or an Array of 
+  #   multiple modes, eg. %w( visual command ). default: 'normal'
   #
   #   valid mode names: normal, visual, insert, command, operator, lang
   #
@@ -173,8 +175,36 @@ module Vimilicious
   #   a block of code to run whenever the code is pressed
   #
   # TODO allow #map('<C-r>'){ ... } and use default mode
+  # TODO allow #map('<C-r>', 'vim command')
   #
-  def map mode, shortcut, vim_command = nil, &block
+  def map modes, shortcut = nil, vim_command = nil, &block
+    
+    # first argument isn't a mode, it's a shortcut!
+    unless modes.is_a?(Symbol) or modes.is_a?(Array)
+      vim_command = shortcut
+      shortcut    = modes
+      modes       = :normal # default
+    end
+
+    modes_to_use = map_commands_for *modes
+    raise "Don't know how to map #{ modes.inspect }" if modes_to_use.empty?
+
+    if vim_command
+      modes_to_use.each do |mode|
+        cmd "#{ mode } #{ shortcut } #{ vim_command }"
+      end
+
+    elsif block
+      unique_key = "#{ shortcut.inspect } #{ modes.inspect } #{ Time.now }"
+      @mapped_blocks ||= { }
+      @mapped_blocks[unique_key] = block
+      modes_to_use.each do |mode|
+        cmd "#{ mode } #{ shortcut } :ruby @mapped_blocks[%{#{ unique_key }}].call<Enter>"
+      end
+
+    else
+      raise "Not sure what you want to map to ... no vim_command or block passed."
+    end 
   end
 
   # returns the map command(s) you should use if you want 
@@ -196,6 +226,9 @@ module Vimilicious
       :imap => [ :insert ], 
       :lmap => [ :insert, :command, :lang ]
     }
+
+    # symbolize
+    modes = modes.map {|mode| mode.to_s.downcase.to_sym }
     
     # first, see if there's a mode that has the modes we want and nothing more
     mode_that_has_everything_we_want_and_nothing_else = @mapmodes.find do |mode_command, available_modes|
@@ -229,8 +262,7 @@ module Vimilicious
     if modes_that_have_everything_we_want_and_some_more.length == 1
       return [ modes_that_have_everything_we_want_and_some_more[0][0] ]
     else
-      puts "modes: #{ modes.inspect } ... we found: #{ modes_that_have_everything_we_want_and_some_more.inspect }"
-      []
+      [] # couldn't find anything  :/
     end
 
   end
