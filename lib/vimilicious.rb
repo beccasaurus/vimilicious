@@ -199,7 +199,7 @@ module Vimilicious
       @mapped_blocks ||= { }
       @mapped_blocks[unique_key] = block
       modes_to_use.each do |mode|
-        cmd "#{ mode } #{ shortcut } :ruby @mapped_blocks[%{#{ unique_key }}].call<Enter>"
+        cmd "#{ mode } #{ shortcut } <Esc>:ruby @mapped_blocks[%{#{ unique_key }}].call<Enter>"
       end
 
     else
