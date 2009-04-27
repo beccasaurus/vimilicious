@@ -8,6 +8,13 @@ module Vimilicious
     VIM::command vim_ex_command
   end
 
+  # runs a system command in vim, by calling :! command
+  #
+  #   :ruby run 'ls'
+  def run system_command
+    cmd "! #{ system_command }"
+  end
+
   # evaluate vim expression
   #
   #   :ruby puts 'x = ' + vim_eval('x')
