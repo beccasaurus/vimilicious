@@ -78,6 +78,16 @@ module Vimilicious
     current_window.cursor
   end
 
+  # get the current line number (of the #current_buffer)
+  def line_number
+    cursor.first
+  end
+
+  # get the text of the given #line_number (of the #current_buffer)
+  def line_text the_line_number = line_number
+    current_buffer[the_line_number]
+  end
+
   # get the text of the currently selected line
   #
   #   :ruby puts "the current line says: #{current_line}"
@@ -202,11 +212,11 @@ module Vimilicious
       end
 
     elsif block
-      unique_key = "#{ shortcut.inspect } #{ modes.inspect } #{ Time.now }"
+      unique_key = "#{ shortcut.inspect }_#{ modes.inspect }_#{ Time.now.to_i }"
       @mapped_blocks ||= { }
       @mapped_blocks[unique_key] = block
       modes_to_use.each do |mode|
-        cmd "#{ mode } #{ shortcut } <Esc>:ruby @mapped_blocks[%{#{ unique_key }}].call<Enter>"
+        cmd "#{ mode } #{ shortcut } <Esc>:ruby @mapped_blocks[#{ unique_key.inspect }].call<Enter>"
       end
 
     else
