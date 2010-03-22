@@ -23,8 +23,8 @@ Install
 Usage
 -----
 
-The best place to start is by looking at the Vimilicious API.
+The best place to start is by looking at the Vimilicious API: [http://yardoc.org/docs/remi-vimilicious/Vimilicious](http://yardoc.org/docs/remi-vimilicious/Vimilicious)
 
-You can also view examples: [http://github.com/remi/vimilicious/tree/master/examples][examples]
+You can also view examples: [http://github.com/remi/vimilicious/tree/master/examples](http://github.com/remi/vimilicious/tree/master/examples)
 
 see Vimilicious documentation or examples
